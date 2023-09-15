@@ -5,6 +5,8 @@ import './App.css';
 import Login from './components/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Infradio from './components/master/infradio';
+import Infusuario from './components/master/infusuario';
+import Infhistorial from './components/master/infhistorial';
 
 const Home=()=>{
   return (
@@ -29,6 +31,8 @@ export  const Rutas= createBrowserRouter(
     <Route element={<AuthLayout/>}>
       <Route path="/" element={ <Login/> } />
       <Route  path="/radios" element={<Infradio/>}/>
+      <Route path='/usuarios' element={<Infusuario/>}/>
+      <Route path='/historial' element={<Infhistorial/>}/>
 
       <Route path="/welcome" element={<ProtectedRoute/>}> 
         <Route path="inicio" element={ <Home/> } />

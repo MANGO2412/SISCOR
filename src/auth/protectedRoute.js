@@ -3,7 +3,7 @@ import {useAuth} from  './useAuth'
 
 
 export default  function   ProtectedRoute(){
-    const {user}=useAuth();
+    const {user,logout}=useAuth();
     const outlet=useOutlet();
 
     if(!user){
@@ -12,9 +12,11 @@ export default  function   ProtectedRoute(){
    
     return(
     <div>
+        {/* nav para cuando el usuario  este logeado */}
         <nav>
           <Link to="/settings">Settings</Link>
           <Link to="/profile">Profile</Link>
+          <button onClick={()=>{logout()}}>cerrar session</button>
         </nav>
         {outlet}
       </div>

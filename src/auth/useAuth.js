@@ -14,7 +14,7 @@ export const AuthProvider=({children})=>{
     /**you can use this function if you want to authenticate to a user */
     const login=async(data)=>{
         setUser(data)
-        navigate("/welcome")
+        navigate("/welcome/inicio")
     }
 
 

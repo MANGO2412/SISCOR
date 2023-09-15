@@ -1,9 +1,20 @@
-import React from 'react';
+import * as  React from 'react';
 import logo from './img/logo.png';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import {useAuth} from '../auth/useAuth'
 
 function Login() {
+   const {login}=useAuth();
+   const [email,setEmail]=React.useState("");
+   const [password,setPassword]=React.useState("");
+
+
+   //function to send data to api
+   const handleSubmit =()=>{
+      login({email,password});    
+   }
+   
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop:200 }}>
       <Card style={{ width: '30rem' }}>
@@ -19,6 +30,7 @@ function Login() {
             placeholder='Correo electrónico'
             aria-describedby="emailHelpBlock"
             style={{ width: 380, marginLeft: 0 }}
+            onChange={e=>setEmail(e.target.value)}
           />
           <Form.Text id="passwordHelpBlock" muted style={{ marginLeft: 0 }}>
             Escribe el email proporcionado por la empresa.
@@ -32,11 +44,12 @@ function Login() {
             placeholder='Contraseña'
             aria-describedby="passwordHelpBlock"
             style={{ width: 380, marginLeft: 0 }}
+            onChange={e=>setPassword(e.target.value)}
           />
           <Form.Text id="passwordHelpBlock" muted style={{ marginLeft: 0, marginRight: 0 }}>
             Tu contraseña debe contener al menos 5 caracteres o más.
           </Form.Text>
-          <button style={{ backgroundColor: '#a78455', color: 'white', padding: '10px 10px', borderRadius: '5px', border: 1, marginTop: 20, marginLeft:160 }}>
+          <button onClick={handleSubmit} style={{ backgroundColor: '#a78455', color: 'white', padding: '10px 10px', borderRadius: '5px', border: 1, marginTop: 20, marginLeft:160 }}>
             Iniciar sesión
           </button>
         </Card.Body>
