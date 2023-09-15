@@ -99,7 +99,7 @@ function Infradio() {
                 <td>{radio.rfsi}</td>
                 <td>{radio.Serie}</td>
                 <td>{radio.modelo}</td>
-                <td>{radio.situacion}</td>
+                <td>{radio.situacion ? (radio.situacion) : (<p>no hay ningun radio</p>)}</td>
                 <td>
                   {/* <button variant="primary" onClick={handleInsertButtonClick}>
                     Editar
