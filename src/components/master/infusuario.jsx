@@ -5,8 +5,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useAuth } from "../../auth/useAuth";
+import axios from "axios";
 
 function Infusuario() {
+  const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,20 +38,37 @@ function Infusuario() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3300/usuarios")
-      .then((response) => response.json())
-      .then((data) => {
-        // Verificar si la respuesta es un array o no
-        if (Array.isArray(data)) {
-          setUsuarios(data);
-        } else {
-          console.error("La respuesta de la API no es un array:", data);
-        }
+    // Realiza la solicitud a la API utilizando Axios
+    axios.get("http://localhost:3000/usuarios",{
+      headers:{
+        "x-access-token": user.token
+      }
+    })
+      .then((response) => {
+        // Actualiza el estado con los datos de la API
+        setUsuarios(response.data);
       })
       .catch((error) => {
+        console.log(error)
         console.error("Error al cargar datos de la API:", error);
       });
   }, []);
+
+    // crear nuevo usuario
+    useEffect(() => {
+  axios.post("http://localhost:3000/usuarios", formData,{
+    headers:{
+      "x-access-token": user.token
+    }
+  }).then((response) => {
+    // Actualiza el estado con los datos de la API
+    setUsuarios(response.data);
+  })
+  .catch((error) => {
+    console.log(error)
+    console.error("Error al cargar datos de la API:", error);
+  });
+  },[]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -87,8 +107,7 @@ function Infusuario() {
 
   const handleInsertSubmit = (e) => {
     e.preventDefault();
-    const updatedUsers = [...usuarios];
-
+    const updatedUsers = [...usuarios]; 
     if (editMode) {
       const userIndex = updatedUsers.findIndex((user) => user.ID === selectedUserId);
       updatedUsers[userIndex] = formData;
@@ -124,15 +143,17 @@ function Infusuario() {
       <h1>Lista de Usuarios</h1>
       {/* Campo de búsqueda */}
       <Form.Group controlId="formSearch">
-        <Form.Control
-          type="text"
-          placeholder="Buscar por nombre"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </Form.Group>
+  <Form.Control
+    type="text"
+    placeholder="Buscar por nombre"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="rounded-pill"
+    style={{ borderColor: '#007BFF', width: '290px', height: '30px' }}
+  />
+</Form.Group>
       <br></br>
-      <Button variant="warning" onClick={handleInsertButtonClick}>
+      <Button variant="primary" onClick={handleInsertButtonClick}>
         Insertar
       </Button>
       <Table striped responsive="sm" bordered hover>
@@ -144,7 +165,7 @@ function Infusuario() {
             <th style={TableStyle}>Usuario</th>
             <th style={TableStyle}>Correo</th>
             <th style={TableStyle}>Contraseña</th>
-            <th style={TableStyle}>Nivel_Uusario</th>
+            <th style={TableStyle}>Nivel_Usuario</th>
             <th style={TableStyle}>Acción</th>
           </tr>
         </thead>
@@ -176,15 +197,6 @@ function Infusuario() {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleInsertSubmit}>
-            <Form.Group controlId="formId">
-              <Form.Label>ID</Form.Label>
-              <Form.Control
-                type="text"
-                name="id"
-                value={formData.id}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
             <Form.Group controlId="formNombre">
               <Form.Label>Nombre</Form.Label>
               <Form.Control

@@ -6,13 +6,13 @@ import {useAuth} from '../auth/useAuth'
 
 function Login() {
    const {login}=useAuth();
-   const [email,setEmail]=React.useState("");
+   const [username,setusername]=React.useState("");
    const [password,setPassword]=React.useState("");
 
 
    //function to send data to api
    const handleSubmit =()=>{
-      login({email,password});    
+      login({username,password});    
    }
    
   return (
@@ -30,7 +30,7 @@ function Login() {
             placeholder='Correo electrónico'
             aria-describedby="emailHelpBlock"
             style={{ width: 380, marginLeft: 0 }}
-            onChange={e=>setEmail(e.target.value)}
+            onChange={e=>setusername(e.target.value)}
           />
           <Form.Text id="passwordHelpBlock" muted style={{ marginLeft: 0 }}>
             Escribe el email proporcionado por la empresa.
