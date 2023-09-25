@@ -123,7 +123,7 @@ function Infusuario() {
   const filteredUsers = usuarios.filter((user) =>
     user.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+/////////////////////////////////////////////////////// Ventana de radios /////////////////////////////////////////////////////////////
   return (
     <div>
       <Navbar style={{ backgroundColor: '#60182c', color: 'white', height: 80 }} variant="dark" responsive>
@@ -156,6 +156,7 @@ function Infusuario() {
       <Button variant="primary" onClick={handleInsertButtonClick}>
         Insertar
       </Button>
+      
       <Table striped responsive="sm" bordered hover>
         <thead>
           <tr>

@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
@@ -19,7 +19,7 @@ function Infradio() {
     Modelo: "",
     Situacion: ""
   });
-  
+
   const [insertFormData, setInsertFormData] = useState({
     No_inventario: "",
     RFSI: "",
@@ -29,11 +29,9 @@ function Infradio() {
   });
 
   const [radioData, setRadioData] = useState([]);
-  const [selectedRadio, setSelectedRadio] = useState(null); // Nuevo estado
+  const [selectedRadio, setSelectedRadio] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-
 
   useEffect(() => {
     axios.get("http://localhost:3000/radios", {
@@ -48,21 +46,17 @@ function Infradio() {
         console.error("Error al cargar datos de la API:", error);
       });
   }, []);
-  
-    const filteredRadios = radioData.filter((radio) =>
-    radio.RFSI && searchTerm && radio.RFSI.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
-  const handleEditModalOpen = (radio) => { // Modificar función para recibir el radio
-  setSelectedRadio(radio); // Establecer el radio seleccionado
-  setEditFormData({ // Establecer editFormData con los valores del radio seleccionado
-    No_inventario: radio.No_inventario,
-    RFSI: radio.RFSI,
-    Modelo: radio.Modelo,
-    Situacion: radio.Situacion.Situacion || "" // Puedes establecer un valor por defecto si es null o undefined
-  });
-  setShowEditModal(true);
-};
+  const handleEditModalOpen = (radio) => {
+    setSelectedRadio(radio);
+    setEditFormData({
+      No_inventario: radio.No_inventario,
+      RFSI: radio.RFSI,
+      Modelo: radio.Modelo,
+      Situacion: radio.Situacion.Situacion || ""
+    });
+    setShowEditModal(true);
+  };
 
   const handleEditModalClose = () => {
     setShowEditModal(false);
@@ -89,11 +83,11 @@ function Infradio() {
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
-  
+
   const handleEditSubmit = (e) => {
     e.preventDefault();
 
-    axios.put(`http://localhost:3000/radios/update/${selectedRadio.Serie}`, editFormData, { // Usar la serie del radio seleccionado
+    axios.put(`http://localhost:3000/radios/update/${selectedRadio.Serie}`, editFormData, {
       headers: {
         "x-access-token": user.token
       }
@@ -101,14 +95,11 @@ function Infradio() {
       .then((response) => {
         setRadioData(response.data);
         setShowEditModal(false);
-        setSelectedRadio(null); // Limpiar el radio seleccionado después de la edición
-        console.log(editFormData)
+        setSelectedRadio(null);
       })
       .catch((error) => {
         console.log(error);
         console.error("Error al cargar datos de la API:", error);
-        console.log(editFormData)
-        // Puedes manejar el error aquí, mostrar un mensaje, etc.
       });
   };
 
@@ -121,16 +112,12 @@ function Infradio() {
       }
     })
       .then((response) => {
-        console.log(insertFormData)
-        // Actualiza el estado con los datos de la API si es necesario
         setRadioData(response.data);
         setShowInsertModal(false);
       })
       .catch((error) => {
         console.log(error);
-        console.log(insertFormData)
         console.error("Error al cargar datos de la API:", error);
-        // Puedes manejar el error aquí, mostrar un mensaje, etc.
       });
   };
 
@@ -144,6 +131,10 @@ function Infradio() {
     backgroundColor: '#60182c',
     color: 'white',
   };
+  
+  const filteredRadios = radioData.filter((radio) =>
+    radio.RFSI.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -162,13 +153,13 @@ function Infradio() {
         </Container>
       </Navbar>
       <h1>Lista de radios</h1>
-       {/* Campo de búsqueda */}
-       <Form.Group controlId="formSearch">
+      {/* Campo de búsqueda */}
+      <Form.Group controlId="formSearch">
         <Form.Control
-          type="text" 
+          type="text"
           placeholder="Buscar por RFSI"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchInputChange}
           className="rounded-pill"
           style={{ borderColor: '#007BFF', width: '290px', height: '30px' }}
         />
@@ -186,8 +177,8 @@ function Infradio() {
             <th style={TableStyle}>Accion</th>
           </tr>
         </thead>
-          <tbody>
-          {radioData.map((radio) => (
+        <tbody>
+          {filteredRadios.map((radio) => (
             <tr key={radio.Serie}>
               <td>{radio.No_inventario}</td>
               <td>{radio.RFSI}</td>
@@ -204,68 +195,68 @@ function Infradio() {
 
       {/* Modal de modificar las radios */}
       <Modal show={showEditModal} onHide={handleEditModalClose}>
-  <Modal.Header closeButton>
-    <Modal.Title>Modificar el radio</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form onSubmit={handleEditSubmit}>
-      <Form.Group controlId="formNo_inventario">
-        <Form.Label>no.Inventario</Form.Label>
-        <Form.Control
-          type="text"
-          name="No_inventario"
-          value={editFormData.No_inventario}
-          onChange={handleEditInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="formRFSI">
-        <Form.Label>RFSI</Form.Label>
-        <Form.Control
-          type="text"
-          name="RFSI"
-          value={editFormData.RFSI}
-          onChange={handleEditInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="formModelo">
-        <Form.Label>Modelo</Form.Label>
-        <Form.Control
-          type="text"
-          name="Modelo"
-          value={editFormData.Modelo}
-          onChange={handleEditInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="formSituacion">
-        <Form.Label>Situacion</Form.Label>
-        <Form.Control
-          as="select"
-          name="Situacion"
-          value={editFormData.Situacion}
-          onChange={handleEditInputChange}
-        >
-          <option value='1'>A disposicion del ministerio</option>
-          <option value='2'>En acta de Entreg-Recepcion</option>
-          <option value='3'>En proceso de Entrega</option>
-          <option value='4'>En reparacion de Programacion</option>
-          <option value='5'>En servicio bajo resguardo</option>
-          <option value='6'>Extraviado</option>
-          <option value='7'>Garantia</option>
-          <option value='8'>Para Baja</option>
-          <option value='9'>Para enviar al distrito</option>
-          <option value='10'>Para entregar al oficial</option>
-          <option value='11'>Para reparacion</option>
-          <option value='12'>Prestamo Diario</option>
-          <option value='13'>Prestamo provisional</option>
-          <option value='14'>Popiedad del Estado</option>
-        </Form.Control>
-      </Form.Group>
-      <Button variant="primary" type="submit">
-        Modificar
-      </Button>
-    </Form>
-  </Modal.Body>
-</Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Modificar el radio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleEditSubmit}>
+            <Form.Group controlId="formNo_inventario">
+              <Form.Label>no.Inventario</Form.Label>
+              <Form.Control
+                type="text"
+                name="No_inventario"
+                value={editFormData.No_inventario}
+                onChange={handleEditInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formRFSI">
+              <Form.Label>RFSI</Form.Label>
+              <Form.Control
+                type="text"
+                name="RFSI"
+                value={editFormData.RFSI}
+                onChange={handleEditInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formModelo">
+              <Form.Label>Modelo</Form.Label>
+              <Form.Control
+                type="text"
+                name="Modelo"
+                value={editFormData.Modelo}
+                onChange={handleEditInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formSituacion">
+              <Form.Label>Situacion</Form.Label>
+              <Form.Control
+                as="select"
+                name="Situacion"
+                value={editFormData.Situacion}
+                onChange={handleEditInputChange}
+              >
+                <option value='1'>A disposicion del ministerio</option>
+                <option value='2'>En acta de Entreg-Recepcion</option>
+                <option value='3'>En proceso de Entrega</option>
+                <option value='4'>En reparacion de Programacion</option>
+                <option value='5'>En servicio bajo resguardo</option>
+                <option value='6'>Extraviado</option>
+                <option value='7'>Garantia</option>
+                <option value='8'>Para Baja</option>
+                <option value='9'>Para enviar al distrito</option>
+                <option value='10'>Para entregar al oficial</option>
+                <option value='11'>Para reparacion</option>
+                <option value='12'>Prestamo Diario</option>
+                <option value='13'>Prestamo provisional</option>
+                <option value='14'>Popiedad del Estado</option>
+              </Form.Control>
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Modificar
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
 
       {/* Modal para insertar nuevas radios */}
       <Modal show={showInsertModal} onHide={handleInsertModalClose}>
@@ -278,10 +269,8 @@ function Infradio() {
               <Form.Label>no.Inventario</Form.Label>
               <Form.Control
                 type="text"
-                name="No_inventario
-          "
-                value={insertFormData.No_inventario
-          }
+                name="No_inventario"
+                value={insertFormData.No_inventario}
                 onChange={handleInsertInputChange}
               />
             </Form.Group>
@@ -294,7 +283,7 @@ function Infradio() {
                 onChange={handleInsertInputChange}
               />
             </Form.Group>
-            <Form.Group controlId="formModelo">
+            <Form.Group controlId="formSerie">
               <Form.Label>Serie</Form.Label>
               <Form.Control
                 type="text"
@@ -313,10 +302,10 @@ function Infradio() {
               />
             </Form.Group>
             <Form.Group controlId="formSituacion">
-            <Form.Label>Situacion</Form.Label>
+              <Form.Label>Situacion</Form.Label>
               <Form.Control
                 as="select"
-                name="nivelUsuario"
+                name="Situacion"
                 value={insertFormData.Situacion}
                 onChange={handleInsertInputChange}
               >
