@@ -132,9 +132,17 @@ function Infradio() {
     color: 'white',
   };
   
-  const filteredRadios = radioData.filter((radio) =>
-    radio.RFSI.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const handleFilterChange = (e) => {
+    setSelectedFilter(e.target.value);
+  };
+  
+  const filteredRadios = radioData.filter((radio) => {
+    const isInFilter = selectedFilter === "" || radio.Situacion.Situacion === selectedFilter;
+    const matchesSearchTerm = radio.RFSI.toLowerCase().includes(searchTerm.toLowerCase());
+    return isInFilter && matchesSearchTerm;
+  });
 
   return (
     <div>
@@ -166,6 +174,22 @@ function Infradio() {
       </Form.Group>
       <br></br>
       <button variant="primary" onClick={handleInsertModalOpen}>Crear nuevo radio</button>
+    
+      <h2>Filtro</h2>
+      {/* Filtro por estado */}
+      <Form.Group controlId="formFilter">
+        <Form.Label>Filtrar por Estado</Form.Label>
+        <Form.Control
+          as="select"
+          value={selectedFilter}
+          onChange={handleFilterChange}
+        >
+          <option value="">Todos</option>
+          <option value="En servicio bajo resguardo">En servicio bajo resguardo</option>
+          <option value="Préstamo Diario">Prestamo Diario</option>
+        </Form.Control>
+      </Form.Group>
+
       <Table striped responsive="sm" bordered hover>
         <thead>
           <tr>
